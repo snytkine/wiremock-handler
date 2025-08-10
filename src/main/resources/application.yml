@@ -1,0 +1,10 @@
+spring:
+  application:
+    name: wiremock-handler
+server:
+  port: 8088
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,beans
