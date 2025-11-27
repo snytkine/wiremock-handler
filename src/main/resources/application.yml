@@ -8,3 +8,9 @@ management:
     web:
       exposure:
         include: health,beans
+
+net:
+  snytkine:
+    wiremock-rest-client-middleware:
+      enabled: true
+      mocks-directory: mocks

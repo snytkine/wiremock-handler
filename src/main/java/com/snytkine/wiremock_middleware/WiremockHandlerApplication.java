@@ -8,10 +8,7 @@ public class WiremockHandlerApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(WiremockHandlerApplication.class, args);
-		//WireMockServer wiremock = new WireMockServer(WireMockSpring.options().port(8898));
-		//wiremock.start();
-		//System.out.println("~~~~~~~~~~~~~ wiremock started on port " + wiremock.port());
-
+	
 	}
 
 }
