@@ -4,27 +4,15 @@ import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
 import com.github.tomakehurst.wiremock.direct.DirectCallHttpServer;
 import com.github.tomakehurst.wiremock.direct.DirectCallHttpServerFactory;
-import com.github.tomakehurst.wiremock.http.Request;
-import com.github.tomakehurst.wiremock.http.Request.Part;
-
-import lombok.extern.slf4j.Slf4j;
-
-import com.github.tomakehurst.wiremock.http.RequestMethod;
 import com.github.tomakehurst.wiremock.http.ContentTypeHeader;
 import com.github.tomakehurst.wiremock.http.Cookie;
 import com.github.tomakehurst.wiremock.http.FormParameter;
 import com.github.tomakehurst.wiremock.http.HttpHeader;
 import com.github.tomakehurst.wiremock.http.HttpHeaders;
 import com.github.tomakehurst.wiremock.http.QueryParameter;
-import com.github.tomakehurst.wiremock.http.Response;
-import org.springframework.http.HttpRequest;
-import org.springframework.http.HttpStatusCode;
-import org.springframework.http.MediaType;
-import org.springframework.http.client.ClientHttpRequestExecution;
-import org.springframework.http.client.ClientHttpRequestInterceptor;
-import org.springframework.http.client.ClientHttpResponse;
-import org.springframework.stereotype.Component;
-
+import com.github.tomakehurst.wiremock.http.Request;
+import com.github.tomakehurst.wiremock.http.Request.Part;
+import com.github.tomakehurst.wiremock.http.RequestMethod;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -38,7 +26,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpRequest;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.http.MediaType;
+import org.springframework.http.client.ClientHttpRequestExecution;
+import org.springframework.http.client.ClientHttpRequestInterceptor;
+import org.springframework.http.client.ClientHttpResponse;
+import org.springframework.stereotype.Component;
 
 @Slf4j
 @Component
@@ -46,22 +41,25 @@ public class WireMockMiddleware implements ClientHttpRequestInterceptor {
 
     private final DirectCallHttpServer directCallHttpServer;
 
-    public WireMockMiddleware() {
+    public WireMockMiddleware(WireMockConfiguration wireMockConfiguration) {
+
         DirectCallHttpServerFactory wireMockServer = new DirectCallHttpServerFactory();
-        WireMockServer wm = new WireMockServer(wireMockConfig().stubRequestLoggingDisabled(true).usingFilesUnderClasspath("mappings").httpServerFactory(wireMockServer));
+        wireMockConfiguration.httpServerFactory(wireMockServer);
+        WireMockServer wm = new WireMockServer(wireMockConfiguration);
         wm.start(); // no-op, not required
         this.directCallHttpServer = wireMockServer.getHttpServer();
     }
 
     @Override
-    public ClientHttpResponse intercept(HttpRequest request, byte[] body, ClientHttpRequestExecution execution) throws IOException {
+    public ClientHttpResponse intercept(
+            HttpRequest request, byte[] body, ClientHttpRequestExecution execution)
+            throws IOException {
         log.info("Entered intercept");
         Request wiremockRequest = new SpringHttpRequestAdapter(request, body);
 
-        com.github.tomakehurst.wiremock.http.Response wiremockResponse = directCallHttpServer.stubRequest(wiremockRequest);
+        com.github.tomakehurst.wiremock.http.Response wiremockResponse =
+                directCallHttpServer.stubRequest(wiremockRequest);
 
-        var hostHeader = request.getHeaders().getFirst("host");
-        
         if (wiremockResponse.wasConfigured()) {
             return new WiremockClientHttpResponse(wiremockResponse);
         }
@@ -142,7 +140,9 @@ public class WireMockMiddleware implements ClientHttpRequestInterceptor {
         @Override
         public HttpHeaders getHeaders() {
             List<HttpHeader> httpHeaders = new ArrayList<>();
-            springRequest.getHeaders().forEach((key, values) -> httpHeaders.add(new HttpHeader(key, values)));
+            springRequest
+                    .getHeaders()
+                    .forEach((key, values) -> httpHeaders.add(new HttpHeader(key, values)));
             return new HttpHeaders(httpHeaders);
         }
 
@@ -153,7 +153,7 @@ public class WireMockMiddleware implements ClientHttpRequestInterceptor {
 
         @Override
         public Set<String> getAllHeaderKeys() {
-            Set<String> res= springRequest.getHeaders().keySet();
+            Set<String> res = springRequest.getHeaders().keySet();
             return res;
         }
 
@@ -175,7 +175,7 @@ public class WireMockMiddleware implements ClientHttpRequestInterceptor {
 
         @Override
         public String getBodyAsBase64() {
-             return Base64.getEncoder().encodeToString(body);
+            return Base64.getEncoder().encodeToString(body);
         }
 
         @Override
@@ -237,7 +237,8 @@ public class WireMockMiddleware implements ClientHttpRequestInterceptor {
     private static class WiremockClientHttpResponse implements ClientHttpResponse {
         private final com.github.tomakehurst.wiremock.http.Response wiremockResponse;
 
-        public WiremockClientHttpResponse(com.github.tomakehurst.wiremock.http.Response wiremockResponse) {
+        public WiremockClientHttpResponse(
+                com.github.tomakehurst.wiremock.http.Response wiremockResponse) {
             this.wiremockResponse = wiremockResponse;
         }
 
@@ -263,7 +264,8 @@ public class WireMockMiddleware implements ClientHttpRequestInterceptor {
 
         @Override
         public org.springframework.http.HttpHeaders getHeaders() {
-            org.springframework.http.HttpHeaders headers = new org.springframework.http.HttpHeaders();
+            org.springframework.http.HttpHeaders headers =
+                    new org.springframework.http.HttpHeaders();
             if (wiremockResponse.getHeaders() != null) {
                 for (HttpHeader header : wiremockResponse.getHeaders().all()) {
                     headers.addAll(header.key(), header.values());

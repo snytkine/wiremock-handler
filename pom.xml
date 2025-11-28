@@ -65,6 +65,12 @@
 			<version>1.18.32</version>
 			<scope>provided</scope>
 		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-configuration-processor</artifactId>
+			<optional>true</optional>
+		</dependency>
 	</dependencies>
 
 	<build>
@@ -72,6 +78,67 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>com.diffplug.spotless</groupId>
+				<artifactId>spotless-maven-plugin</artifactId>
+				<version>2.43.0</version>
+				<configuration>
+					<java>
+						<googleJavaFormat>
+							<version>1.17.0</version>
+							<style>AOSP</style>
+						</googleJavaFormat>
+					</java>
+					<formats>
+						<format>
+							<includes>
+								<include>src/main/resources/**/*.yml</include>
+								<include>src/test/resources/**/*.yml</include>
+							</includes>
+							<prettier>
+								<devDependencies>
+									<prettier>2.8.8</prettier>
+								</devDependencies>
+								<config>
+									<parser>yaml</parser>
+									<tabWidth>2</tabWidth>
+								</config>
+							</prettier>
+						</format>
+						<format>
+							<includes>
+								<include>pom.xml</include>
+								<include>src/main/resources/**/*.xml</include>
+								<include>src/test/resources/**/*.xml</include>
+							</includes>
+						</format>
+						<format>
+							<includes>
+								<include>src/main/resources/**/*.json</include>
+								<include>src/test/resources/**/*.json</include>
+							</includes>
+							<prettier>
+								<devDependencies>
+									<prettier>2.8.8</prettier>
+								</devDependencies>
+								<config>
+									<parser>json</parser>
+									<tabWidth>2</tabWidth>
+								</config>
+							</prettier>
+						</format>
+					</formats>
+				</configuration>
+				<executions>
+                    <execution>
+                        <id>spotless-check</id>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
 			</plugin>
 		</plugins>
 	</build>

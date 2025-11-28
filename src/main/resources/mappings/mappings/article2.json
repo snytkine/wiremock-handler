@@ -1,16 +1,21 @@
 {
-    "request":{
-        "method":"GET",
-        "url": "/posts/2",
-        "host": {
-            "equalTo": "jsonplaceholder.typicode.com"
-        }
-    },
-    "response":{
-        "status": 200,
-        "headers": {
-        "Content-Type": "application/json"
-    },
-        "jsonBody": {"userId":1,"id":3,"title":"My Mock Title","body":"Hey there! This is mock data."}
+  "request": {
+    "method": "GET",
+    "url": "/posts/2",
+    "host": {
+      "equalTo": "jsonplaceholder.typicode.com"
     }
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "jsonBody": {
+      "userId": 1,
+      "id": 3,
+      "title": "My Mock Title",
+      "body": "Hey there! This is mock data."
+    }
+  }
 }

@@ -7,8 +7,7 @@ public class BlogPost {
     private String title;
     private String body;
 
-    public BlogPost() {
-    }
+    public BlogPost() {}
 
     public BlogPost(Integer userId, Integer id, String title, String body) {
         this.userId = userId;

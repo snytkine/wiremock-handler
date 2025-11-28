@@ -1,8 +1,12 @@
 package com.snytkine.wiremock_middleware.model;
 
 import lombok.Data;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.stereotype.Component;
 
+@ConfigurationProperties(prefix = "net.snytkine.rest-client-middleware.wiremock")
 @Data
+@Component
 public class WireMockProperties {
     private boolean enabled = false;
     private Integer containerThreads;
@@ -13,13 +17,10 @@ public class WireMockProperties {
     private Integer maxRequestJournalEntries;
     private Boolean gzipDisabled;
     private Boolean disableOptimizeXmlFactories;
-    private Boolean useChunkedTransferEncoding;
     private Boolean stubCorsEnabled;
     private Boolean stubRequestLoggingDisabled;
-    private Boolean showcaseNotMatchedRequests;
     private Long maxTemplateCacheEntries;
-    private String stringMatchDistanceFunction;
-    private Boolean prettyPrintStubs;
     private Boolean globalTemplating;
-    private Boolean localTemplating;
+    private boolean templatingEnabled;
+    private String mappingsClassPath;
 }
