@@ -33,6 +33,7 @@ import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -48,7 +49,7 @@ public class WireMockMiddleware implements ClientHttpRequestInterceptor {
     public WireMockMiddleware() {
         DirectCallHttpServerFactory wireMockServer = new DirectCallHttpServerFactory();
         WireMockServer wm = new WireMockServer(wireMockConfig().httpServerFactory(wireMockServer));
-        //wm.start(); // no-op, not required
+        wm.start(); // no-op, not required
         this.directCallHttpServer = wireMockServer.getHttpServer();
     }
 
@@ -203,32 +204,31 @@ public class WireMockMiddleware implements ClientHttpRequestInterceptor {
 
         @Override
         public FormParameter formParameter(String arg0) {
-            // TODO Auto-generated method stub
-            throw new UnsupportedOperationException("Unimplemented method 'formParameter'");
+            return null;
         }
 
         @Override
         public Map<String, FormParameter> formParameters() {
-            // TODO Auto-generated method stub
-            throw new UnsupportedOperationException("Unimplemented method 'formParameters'");
+            return new HashMap<>();
         }
 
         @Override
         public Map<String, Cookie> getCookies() {
-            // TODO Auto-generated method stub
-            throw new UnsupportedOperationException("Unimplemented method 'getCookies'");
+            return new HashMap<>();
         }
 
         @Override
         public String getProtocol() {
-            // TODO Auto-generated method stub
-            throw new UnsupportedOperationException("Unimplemented method 'getProtocol'");
+            return "http";
         }
 
         @Override
         public HttpHeader header(String arg0) {
-            // TODO Auto-generated method stub
-            throw new UnsupportedOperationException("Unimplemented method 'header'");
+            var myHeader = springRequest.getHeaders().getFirst(arg0);
+            if (myHeader != null) {
+                return new HttpHeader(arg0, myHeader);
+            }
+            return null;
         }
     }
 
