@@ -14,3 +14,4 @@ net:
     wiremock-rest-client-middleware:
       enabled: true
       mocks-directory: mocks
+      mock-header-name: test-header

@@ -48,7 +48,7 @@ public class WireMockMiddleware implements ClientHttpRequestInterceptor {
 
     public WireMockMiddleware() {
         DirectCallHttpServerFactory wireMockServer = new DirectCallHttpServerFactory();
-        WireMockServer wm = new WireMockServer(wireMockConfig().httpServerFactory(wireMockServer));
+        WireMockServer wm = new WireMockServer(wireMockConfig().stubRequestLoggingDisabled(true).usingFilesUnderClasspath("mappings").httpServerFactory(wireMockServer));
         wm.start(); // no-op, not required
         this.directCallHttpServer = wireMockServer.getHttpServer();
     }
@@ -219,7 +219,7 @@ public class WireMockMiddleware implements ClientHttpRequestInterceptor {
 
         @Override
         public String getProtocol() {
-            return "http";
+            return "https";
         }
 
         @Override
