@@ -60,6 +60,8 @@ public class WireMockMiddleware implements ClientHttpRequestInterceptor {
 
         com.github.tomakehurst.wiremock.http.Response wiremockResponse = directCallHttpServer.stubRequest(wiremockRequest);
 
+        var hostHeader = request.getHeaders().getFirst("host");
+        
         if (wiremockResponse.wasConfigured()) {
             return new WiremockClientHttpResponse(wiremockResponse);
         }
