@@ -15,3 +15,4 @@ net:
       wiremock:
         enabled: true
         mappings-class-path: mappings
+        proxy-pass-through: true

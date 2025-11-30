@@ -13,6 +13,7 @@ import com.github.tomakehurst.wiremock.http.QueryParameter;
 import com.github.tomakehurst.wiremock.http.Request;
 import com.github.tomakehurst.wiremock.http.Request.Part;
 import com.github.tomakehurst.wiremock.http.RequestMethod;
+import com.snytkine.wiremock_middleware.model.WireMockProperties;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -33,16 +34,20 @@ import org.springframework.http.MediaType;
 import org.springframework.http.client.ClientHttpRequestExecution;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.client.ClientHttpResponse;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
+import org.springframework.web.util.UriComponentsBuilder;
 
 @Slf4j
 @Component
 public class WireMockMiddleware implements ClientHttpRequestInterceptor {
 
     private final DirectCallHttpServer directCallHttpServer;
+    private final WireMockProperties properties;
 
-    public WireMockMiddleware(WireMockConfiguration wireMockConfiguration) {
-
+    public WireMockMiddleware(
+            WireMockConfiguration wireMockConfiguration, WireMockProperties properties) {
+        this.properties = properties;
         DirectCallHttpServerFactory wireMockServer = new DirectCallHttpServerFactory();
         wireMockConfiguration.httpServerFactory(wireMockServer);
         WireMockServer wm = new WireMockServer(wireMockConfiguration);
@@ -51,8 +56,10 @@ public class WireMockMiddleware implements ClientHttpRequestInterceptor {
     }
 
     @Override
-    public ClientHttpResponse intercept(
-            HttpRequest request, byte[] body, ClientHttpRequestExecution execution)
+    public @NonNull ClientHttpResponse intercept(
+            @NonNull HttpRequest request,
+            @NonNull byte[] body,
+            @NonNull ClientHttpRequestExecution execution)
             throws IOException {
         log.info("Entered intercept");
         Request wiremockRequest = new SpringHttpRequestAdapter(request, body);
@@ -61,7 +68,7 @@ public class WireMockMiddleware implements ClientHttpRequestInterceptor {
                 directCallHttpServer.stubRequest(wiremockRequest);
 
         if (wiremockResponse.wasConfigured()) {
-            return new WiremockClientHttpResponse(wiremockResponse);
+            return new WiremockClientHttpResponse(wiremockResponse, properties);
         }
 
         return execution.execute(request, body);
@@ -70,10 +77,27 @@ public class WireMockMiddleware implements ClientHttpRequestInterceptor {
     private static class SpringHttpRequestAdapter implements Request {
         private final HttpRequest springRequest;
         private final byte[] body;
+        private final Map<String, QueryParameter> queryParameters;
+
+        private Map<String, QueryParameter> parseQueryParameters() {
+            Map<String, QueryParameter> params = new HashMap<>();
+            UriComponentsBuilder.fromUri(springRequest.getURI())
+                    .build()
+                    .getQueryParams()
+                    .forEach((key, values) -> params.put(key, new QueryParameter(key, values)));
+            return Collections.unmodifiableMap(params);
+        }
+
+        private boolean isFormUrlEncoded() {
+            return Optional.ofNullable(springRequest.getHeaders().getContentType())
+                    .map(mt -> mt.isCompatibleWith(MediaType.APPLICATION_FORM_URLENCODED))
+                    .orElse(false);
+        }
 
         public SpringHttpRequestAdapter(HttpRequest springRequest, byte[] body) {
             this.springRequest = springRequest;
             this.body = body;
+            this.queryParameters = parseQueryParameters();
         }
 
         @Override
@@ -159,8 +183,7 @@ public class WireMockMiddleware implements ClientHttpRequestInterceptor {
 
         @Override
         public QueryParameter queryParameter(String key) {
-            // Not implemented for brevity
-            return null;
+            return queryParameters.get(key);
         }
 
         @Override
@@ -211,7 +234,7 @@ public class WireMockMiddleware implements ClientHttpRequestInterceptor {
 
         @Override
         public Map<String, FormParameter> formParameters() {
-            return new HashMap<>();
+            return null;
         }
 
         @Override
@@ -236,10 +259,13 @@ public class WireMockMiddleware implements ClientHttpRequestInterceptor {
 
     private static class WiremockClientHttpResponse implements ClientHttpResponse {
         private final com.github.tomakehurst.wiremock.http.Response wiremockResponse;
+        private WireMockProperties configuration;
 
         public WiremockClientHttpResponse(
-                com.github.tomakehurst.wiremock.http.Response wiremockResponse) {
+                com.github.tomakehurst.wiremock.http.Response wiremockResponse,
+                WireMockProperties configuration) {
             this.wiremockResponse = wiremockResponse;
+            this.configuration = configuration;
         }
 
         @Override
@@ -271,6 +297,10 @@ public class WireMockMiddleware implements ClientHttpRequestInterceptor {
                     headers.addAll(header.key(), header.values());
                 }
             }
+            if (configuration.getMockResponseHeader() != null) {
+                headers.set(configuration.getMockResponseHeader(), "mocked-response");
+            }
+
             return headers;
         }
     }

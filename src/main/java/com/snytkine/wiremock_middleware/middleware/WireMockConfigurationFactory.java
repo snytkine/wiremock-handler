@@ -46,6 +46,13 @@ public class WireMockConfigurationFactory {
                 .ifPresent(wireMockConfiguration::templatingEnabled);
         Optional.ofNullable(wireMockProperties.getMappingsClassPath())
                 .ifPresent(wireMockConfiguration::usingFilesUnderClasspath);
+        Optional.ofNullable(wireMockProperties.isProxyPassThrough())
+                .ifPresent(wireMockConfiguration::proxyPassThrough);
+        Optional.ofNullable(wireMockProperties.getJournalDisabled())
+                .filter(Boolean.FALSE::equals)
+                .map(prop -> wireMockConfiguration.requestJournalDisabled());
+
+        wireMockConfiguration.trustAllProxyTargets(true);
 
         return wireMockConfiguration;
     }

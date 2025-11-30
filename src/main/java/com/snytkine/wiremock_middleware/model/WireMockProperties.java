@@ -23,4 +23,6 @@ public class WireMockProperties {
     private Boolean globalTemplating;
     private boolean templatingEnabled;
     private String mappingsClassPath;
+    private boolean proxyPassThrough;
+    private String mockResponseHeader;
 }
