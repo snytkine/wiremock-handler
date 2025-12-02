@@ -1,7 +1,7 @@
 {
   "request": {
     "method": "GET",
-    "url": "/posts/2",
+    "url": "/posts/3",
     "host": {
       "equalTo": "jsonplaceholder.typicode.com"
     }
@@ -11,11 +11,6 @@
     "headers": {
       "Content-Type": "application/json"
     },
-    "jsonBody": {
-      "userId": 1,
-      "id": 2,
-      "title": "My Mock Title 2",
-      "body": "Hey there! This is mock data."
-    }
+    "bodyFileName": "response1.json"
   }
 }
