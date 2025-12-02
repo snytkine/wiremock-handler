@@ -1,6 +1,6 @@
 {
-    "userId": 3,
+    "userId": "{{request.path.postId}}",
     "id": 3,
-    "title": "THIS IS FROM FILE!!! {{request.pathSegments.[1]}} {{now timezone='America/New_York' format='yyyy-MM-dd HH:mm:ssZ'}} {{ random 'Name.first_name' }}",
+    "title": "THIS IS FROM FILE!!! postId is {{request.path.postId}}  {{request.pathSegments.[1]}} {{now timezone='America/New_York' format='yyyy-MM-dd HH:mm:ssZ'}} {{ random 'Name.first_name' }}",
     "body": "resopnse from bodyFileName pathSegments.[1]={{request.pathSegments.[1]}}"
 }

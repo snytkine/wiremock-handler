@@ -1,7 +1,7 @@
 {
   "request": {
     "method": "GET",
-    "url": "/posts/3",
+    "urlPathTemplate": "/posts/{postId}",
     "host": {
       "equalTo": "jsonplaceholder.typicode.com"
     }
@@ -12,6 +12,8 @@
       "Content-Type": "application/json"
     },
     "bodyFileName": "response1.json",
-    "transformers": ["response-template"]
+    "transformers": [
+      "response-template"
+    ]
   }
 }

@@ -2,10 +2,12 @@ package com.snytkine.wiremock_middleware.middleware;
 
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
 import com.snytkine.wiremock_middleware.model.WireMockProperties;
+
+import java.util.Arrays;
 import java.util.Optional;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.wiremock.RandomExtension;
+//import org.wiremock.RandomExtension;
 
 @Configuration
 public class WireMockConfigurationFactory {
@@ -50,9 +52,11 @@ public class WireMockConfigurationFactory {
                 Optional.ofNullable(wireMockProperties.isProxyPassThrough())
                                 .ifPresent(wireMockConfiguration::proxyPassThrough);
 
+                String[] myextensions = { "org.wiremock.RandomExtension" };
+
                 wireMockConfiguration.trustAllProxyTargets(true);
                 wireMockConfiguration.requestJournalDisabled();
-                wireMockConfiguration.extensions(RandomExtension.class);
+                wireMockConfiguration.extensions(myextensions);
 
                 return wireMockConfiguration;
         }
