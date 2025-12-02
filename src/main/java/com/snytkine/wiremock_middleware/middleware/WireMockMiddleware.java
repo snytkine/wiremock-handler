@@ -64,8 +64,8 @@ public class WireMockMiddleware implements ClientHttpRequestInterceptor {
         log.info("Entered intercept");
         Request wiremockRequest = new SpringHttpRequestAdapter(request, body);
 
-        com.github.tomakehurst.wiremock.http.Response wiremockResponse =
-                directCallHttpServer.stubRequest(wiremockRequest);
+        com.github.tomakehurst.wiremock.http.Response wiremockResponse = directCallHttpServer
+                .stubRequest(wiremockRequest);
 
         if (wiremockResponse.wasConfigured()) {
             return new WiremockClientHttpResponse(wiremockResponse, properties);
@@ -290,8 +290,7 @@ public class WireMockMiddleware implements ClientHttpRequestInterceptor {
 
         @Override
         public org.springframework.http.HttpHeaders getHeaders() {
-            org.springframework.http.HttpHeaders headers =
-                    new org.springframework.http.HttpHeaders();
+            org.springframework.http.HttpHeaders headers = new org.springframework.http.HttpHeaders();
             if (wiremockResponse.getHeaders() != null) {
                 for (HttpHeader header : wiremockResponse.getHeaders().all()) {
                     headers.addAll(header.key(), header.values());

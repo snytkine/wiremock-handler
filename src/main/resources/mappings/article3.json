@@ -1,0 +1,19 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "/posts/3",
+    "host": {
+      "equalTo": "jsonplaceholder.typicode.com"
+    }
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "bodyFileName": "response1.json",
+    "transformers": [
+      "response-template"
+    ]
+  }
+}

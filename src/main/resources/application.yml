@@ -14,5 +14,5 @@ net:
     rest-client-middleware:
       wiremock:
         enabled: true
-        mappings-class-path: mappings
-        proxy-pass-through: true
+        templating-enabled: true
+        mappings-class-path: "mappings"
