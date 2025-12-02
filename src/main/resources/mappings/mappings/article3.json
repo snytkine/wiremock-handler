@@ -11,6 +11,9 @@
     "headers": {
       "Content-Type": "application/json"
     },
-    "bodyFileName": "response1.json"
+    "bodyFileName": "response1.json",
+    "transformers": [
+      "response-template"
+    ]
   }
 }
