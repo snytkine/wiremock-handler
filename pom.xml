@@ -60,6 +60,14 @@
 			<version>${wiremock.version}</version>
 		</dependency>
 
+<!-- https://mvnrepository.com/artifact/org.wiremock.extensions/wiremock-faker-extension -->
+<dependency>
+    <groupId>org.wiremock.extensions</groupId>
+	
+    <artifactId>wiremock-faker-extension</artifactId>
+    <version>0.2.0</version>
+</dependency>
+
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
