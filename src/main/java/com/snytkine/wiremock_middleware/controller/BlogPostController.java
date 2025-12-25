@@ -1,9 +1,6 @@
 package com.snytkine.wiremock_middleware.controller;
 
-import com.snytkine.wiremock_middleware.model.BlogPost;
 import com.snytkine.wiremock_middleware.service.BlogService;
-import java.util.Optional;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,11 +17,6 @@ public class BlogPostController {
 
     @GetMapping("/article/{id}")
     public ResponseEntity<?> getArticleById(@PathVariable String id) {
-        Optional<BlogPost> postOptional = blogService.getPostById(id);
-        if (postOptional.isPresent()) {
-            return ResponseEntity.ok(postOptional.get());
-        } else {
-            return new ResponseEntity<>("Article not found by id " + id, HttpStatus.NOT_FOUND);
-        }
+        return blogService.getPostById(id);
     }
 }

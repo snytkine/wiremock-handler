@@ -7,7 +7,17 @@ management:
   endpoints:
     web:
       exposure:
-        include: health,beans
+        include:
+          - health
+          - beans
+      base-path: /actuator
+  endpoint:
+    beans:
+      enabled: true
+
+logging:
+  level:
+    net.snytkine.wiremock_middleware.middleware: TRACE
 
 net:
   snytkine:
@@ -16,3 +26,4 @@ net:
         enabled: true
         templating-enabled: true
         mappings-class-path: "mappings"
+        mock-response-header: X-Wiremock-Response

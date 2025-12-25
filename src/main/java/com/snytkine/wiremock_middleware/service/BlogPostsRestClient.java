@@ -1,15 +1,15 @@
 package com.snytkine.wiremock_middleware.service;
 
-import com.snytkine.wiremock_middleware.middleware.WireMockMiddleware;
+import net.snytkine.springboot.wiremock_middleware.WireMockInterceptor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.client.RestClient;
 
 @Configuration
 public class BlogPostsRestClient {
-    WireMockMiddleware wireMockMiddleware;
+    WireMockInterceptor wireMockMiddleware;
 
-    public BlogPostsRestClient(WireMockMiddleware wireMockMiddleware) {
+    public BlogPostsRestClient(WireMockInterceptor wireMockMiddleware) {
         this.wireMockMiddleware = wireMockMiddleware;
     }
 

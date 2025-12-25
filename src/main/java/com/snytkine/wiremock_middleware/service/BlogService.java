@@ -1,7 +1,8 @@
 package com.snytkine.wiremock_middleware.service;
 
 import com.snytkine.wiremock_middleware.model.BlogPost;
-import java.util.Optional;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestClientException;
@@ -15,13 +16,17 @@ public class BlogService {
         this.postsRestClient = postsRestClient;
     }
 
-    public Optional<BlogPost> getPostById(String id) {
+    public ResponseEntity<BlogPost> getPostById(String id) {
         try {
-            BlogPost blogPost =
-                    postsRestClient.get().uri("/posts/{id}", id).retrieve().body(BlogPost.class);
-            return Optional.ofNullable(blogPost);
+            ResponseEntity<BlogPost> response =
+                    postsRestClient
+                            .get()
+                            .uri("/posts/{id}", id)
+                            .retrieve()
+                            .toEntity(BlogPost.class);
+            return response;
         } catch (RestClientException e) {
-            return Optional.empty();
+            return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).build();
         }
     }
 }
