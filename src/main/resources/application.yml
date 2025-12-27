@@ -21,9 +21,9 @@ logging:
 
 net:
   snytkine:
-    rest-client-middleware:
-      wiremock:
-        enabled: true
-        templating-enabled: true
-        mappings-class-path: "mappings"
-        mock-response-header: X-Wiremock-Response
+    rest-client-wiremock-interceptor:
+      enabled: true
+      mock-response-header: X-Mock-Response
+      mock-response-header-value: wiremock-middleware
+      templating-enabled: true
+      mappings-class-path: mappings
